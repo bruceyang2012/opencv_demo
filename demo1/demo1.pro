@@ -6,7 +6,9 @@ CONFIG -= qt
 SOURCES += \
     DFT.cpp \
     Bbox.cpp \
-    intergral_blur.cpp
+    intergral_blur.cpp \
+    surf_match.cpp \
+    edcirlces.cpp
 
 INCLUDEPATH += /usr/local/include/opencv \
                /usr/local/include/opencv2 \

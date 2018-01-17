@@ -32,75 +32,75 @@ void edge_demo(Mat &image, Mat &sum);
 
 int getblockSum(Mat &sum, int x1, int y1, int x2, int y2, int i);
 
-int main() {
+//int main() {
 
-    Mat src = imread("text.jpeg");
+//    Mat src = imread("text.jpeg");
 
-    if (src.empty()) {
+//    if (src.empty()) {
 
-        printf("could not load image...\n");
+//        printf("could not load image...\n");
 
-        return -1;
+//        return -1;
 
-    }
+//    }
 
-    namedWindow("input", CV_WINDOW_AUTOSIZE);
+//    namedWindow("input", CV_WINDOW_AUTOSIZE);
 
-    imshow("input", src);
+//    imshow("input", src);
 
-    namedWindow("output", CV_WINDOW_AUTOSIZE);
+//    namedWindow("output", CV_WINDOW_AUTOSIZE);
 
-    // 计算积分图
+//    // 计算积分图
 
-    Mat sum, sqrsum;
+//    Mat sum, sqrsum;
 
-    integral(src, sum, sqrsum, CV_32S, CV_32F);
+//    integral(src, sum, sqrsum, CV_32S, CV_32F);
 
-    // 积分图应用
+//    // 积分图应用
 
-    int type = 0;
+//    int type = 0;
 
-    while (true) {
+//    while (true) {
 
-        char c = waitKey(100);
+//        char c = waitKey(100);
 
-        if (c > 0) {
+//        if (c > 0) {
 
-            type = (int)c;
+//            type = (int)c;
 
-            printf("c : %d\n", type);
+//            printf("c : %d\n", type);
 
-        }
+//        }
 
-        if (c == 27) {
+//        if (c == 27) {
 
-            break; // ESC
+//            break; // ESC
 
-        }
+//        }
 
-        if (type == 49) { // 数字键 1
+//        if (type == 49) { // 数字键 1
 
-            blur_demo(src, sum);
+//            blur_demo(src, sum);
 
-        }
+//        }
 
-        else if (type == 50) { // 数字键 2
+//        else if (type == 50) { // 数字键 2
 
-            edge_demo(src, sum);
+//            edge_demo(src, sum);
 
-        }
+//        }
 
-        else {
+//        else {
 
-            blur_demo(src, sum);
+//            blur_demo(src, sum);
 
-        }
+//        }
 
-    }
+//    }
 
-    return 0;
+//    return 0;
 
-}
+//}
 
 void blur_demo(Mat &image, Mat &sum) {
 
