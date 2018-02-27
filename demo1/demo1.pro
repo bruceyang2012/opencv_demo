@@ -4,11 +4,12 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
-    DFT.cpp \
     Bbox.cpp \
     intergral_blur.cpp \
     surf_match.cpp \
-    edcirlces.cpp
+    edcirlces.cpp \
+    tag_generator.cpp \
+    thread_demo.cpp
 
 INCLUDEPATH += /usr/local/include/opencv \
                /usr/local/include/opencv2 \
@@ -24,3 +25,6 @@ LIBS += /usr/local/lib/libopencv_video.so  \
   /usr/local/lib/libopencv_flann.so   \
   /usr/local/lib/libopencv_calib3d.so \
   /usr/local/lib/libopencv_imgcodecs.so
+
+DISTFILES += \
+    CMakeLists.txt

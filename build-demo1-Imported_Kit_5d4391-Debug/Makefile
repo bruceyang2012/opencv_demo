@@ -35,7 +35,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = demo11.0.0
-DISTDIR = /home/zhou/opencv_demos/build-demo1-Imported_Kit_5d4391-Debug/.tmp/demo11.0.0
+DISTDIR = /home/zhou/opencv_demo/build-demo1-Imported_Kit_5d4391-Debug/.tmp/demo11.0.0
 LINK          = g++
 LFLAGS        = 
 LIBS          = $(SUBLIBS) /usr/local/lib/libopencv_video.so /usr/local/lib/libopencv_objdetect.so /usr/local/lib/libopencv_ml.so /usr/local/lib/libopencv_core.so /usr/local/lib/libopencv_features2d.so /usr/local/lib/libopencv_imgproc.so /usr/local/lib/libopencv_highgui.so /usr/local/lib/libopencv_flann.so /usr/local/lib/libopencv_calib3d.so /usr/local/lib/libopencv_imgcodecs.so 
@@ -50,13 +50,20 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../demo1/DFT.cpp \
-		../demo1/Bbox.cpp \
-		../demo1/intergral_blur.cpp 
-OBJECTS       = DFT.o \
-		Bbox.o \
-		intergral_blur.o
-DIST          = ../../Qt5.9.2/5.9.2/gcc_64/mkspecs/features/spec_pre.prf \
+SOURCES       = ../demo1/Bbox.cpp \
+		../demo1/intergral_blur.cpp \
+		../demo1/surf_match.cpp \
+		../demo1/edcirlces.cpp \
+		../demo1/tag_generator.cpp \
+		../demo1/thread_demo.cpp 
+OBJECTS       = Bbox.o \
+		intergral_blur.o \
+		surf_match.o \
+		edcirlces.o \
+		tag_generator.o \
+		thread_demo.o
+DIST          = ../demo1/CMakeLists.txt \
+		../../Qt5.9.2/5.9.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../../Qt5.9.2/5.9.2/gcc_64/mkspecs/common/unix.conf \
 		../../Qt5.9.2/5.9.2/gcc_64/mkspecs/common/linux.conf \
 		../../Qt5.9.2/5.9.2/gcc_64/mkspecs/common/sanitize.conf \
@@ -230,9 +237,12 @@ DIST          = ../../Qt5.9.2/5.9.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../../Qt5.9.2/5.9.2/gcc_64/mkspecs/features/exceptions.prf \
 		../../Qt5.9.2/5.9.2/gcc_64/mkspecs/features/yacc.prf \
 		../../Qt5.9.2/5.9.2/gcc_64/mkspecs/features/lex.prf \
-		../demo1/demo1.pro  ../demo1/DFT.cpp \
-		../demo1/Bbox.cpp \
-		../demo1/intergral_blur.cpp
+		../demo1/demo1.pro  ../demo1/Bbox.cpp \
+		../demo1/intergral_blur.cpp \
+		../demo1/surf_match.cpp \
+		../demo1/edcirlces.cpp \
+		../demo1/tag_generator.cpp \
+		../demo1/thread_demo.cpp
 QMAKE_TARGET  = demo1
 DESTDIR       = 
 TARGET        = demo1
@@ -638,14 +648,23 @@ compiler_clean:
 
 ####### Compile
 
-DFT.o: ../demo1/DFT.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o DFT.o ../demo1/DFT.cpp
-
 Bbox.o: ../demo1/Bbox.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Bbox.o ../demo1/Bbox.cpp
 
 intergral_blur.o: ../demo1/intergral_blur.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o intergral_blur.o ../demo1/intergral_blur.cpp
+
+surf_match.o: ../demo1/surf_match.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o surf_match.o ../demo1/surf_match.cpp
+
+edcirlces.o: ../demo1/edcirlces.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o edcirlces.o ../demo1/edcirlces.cpp
+
+tag_generator.o: ../demo1/tag_generator.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tag_generator.o ../demo1/tag_generator.cpp
+
+thread_demo.o: ../demo1/thread_demo.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o thread_demo.o ../demo1/thread_demo.cpp
 
 ####### Install
 

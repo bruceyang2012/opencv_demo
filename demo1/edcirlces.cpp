@@ -1119,314 +1119,314 @@ float helmholtz(vector<link_circle>::iterator circle_list_iter, Mat sobelx, Mat 
 
 /****************************主函数*************************************************/
 
-int main()
-{
-    //读图片
-    Mat image = imread("yuan.jpg");
-    shortestline = log(image.rows);
-    Mat gray;
-    cvtColor(image, gray, CV_BGR2GRAY);
-    imshow("image", gray);
-    waitKey(0);
+//int main()
+//{
+//    //读图片
+//    Mat image = imread("yuan.jpg");
+//    shortestline = log(image.rows);
+//    Mat gray;
+//    cvtColor(image, gray, CV_BGR2GRAY);
+//    imshow("image", gray);
+//    waitKey(0);
 
-    /******************用EDPF提取边缘*********************/
+//    /******************用EDPF提取边缘*********************/
 
-    //高斯平滑
-    GaussianBlur(gray, gray, Size(5, 5), 1);
+//    //高斯平滑
+//    GaussianBlur(gray, gray, Size(5, 5), 1);
 
-    //计算梯度
-    Mat sobelx, sobely;
-    Sobel(gray, sobelx, CV_16S, 1, 0, 3);
-    Sobel(gray, sobely, CV_16S, 0, 1, 3);
+//    //计算梯度
+//    Mat sobelx, sobely;
+//    Sobel(gray, sobelx, CV_16S, 1, 0, 3);
+//    Sobel(gray, sobely, CV_16S, 0, 1, 3);
 
-    //梯度方向
-    Mat dir(image.size(), CV_8U);
-    for (int i = 0; i < image.rows; i++)
-    {
-        for (int j = 0; j < image.cols; j++)
-        {
-            if (abs(sobelx.at<short>(i, j)) > abs(sobely.at<short>(i, j)))
-                dir.at<uchar>(i, j) = 255;
-            else
-                dir.at<uchar>(i, j) = 0;
-        }
-    }
+//    //梯度方向
+//    Mat dir(image.size(), CV_8U);
+//    for (int i = 0; i < image.rows; i++)
+//    {
+//        for (int j = 0; j < image.cols; j++)
+//        {
+//            if (abs(sobelx.at<short>(i, j)) > abs(sobely.at<short>(i, j)))
+//                dir.at<uchar>(i, j) = 255;
+//            else
+//                dir.at<uchar>(i, j) = 0;
+//        }
+//    }
 
-    //梯度大小
-    Mat mag = abs(sobelx) + abs(sobely);
-    for (int i = 0; i < image.rows; i++)
-    {
-        for (int j = 0; j < image.cols; j++)
-        {
-            if (mag.at<short>(i, j) < mag_threshold)
-                mag.at<short>(i, j) = 0;
-        }
-    }
-    rectangle(mag, Point(0, 0), Point(mag.cols, mag.rows), Scalar(0), 2, 8);
+//    //梯度大小
+//    Mat mag = abs(sobelx) + abs(sobely);
+//    for (int i = 0; i < image.rows; i++)
+//    {
+//        for (int j = 0; j < image.cols; j++)
+//        {
+//            if (mag.at<short>(i, j) < mag_threshold)
+//                mag.at<short>(i, j) = 0;
+//        }
+//    }
+//    rectangle(mag, Point(0, 0), Point(mag.cols, mag.rows), Scalar(0), 2, 8);
 
-    //寻找锚点
-    Mat edge(image.size(), CV_8U, Scalar(0));
-    for (int i = 1; i < mag.rows - 1; i = i + 1)
-    {
-        for (int j = 1; j < mag.cols - 1; j = j + 1)
-        {
-            if (dir.at<uchar>(i, j) == 255)              //纵向边缘
-            {
-                if (mag.at<short>(i, j) > mag.at<short>(i, j - 1) + 3
-                    && mag.at<short>(i, j) > mag.at<short>(i, j + 1) + 3)
-                    edge.at<uchar>(i, j) = 128;
-            }
-            else                                        //横向边缘
-            {
-                if (mag.at<short>(i, j) > mag.at<short>(i - 1, j) + 3
-                    && mag.at<short>(i, j) > mag.at<short>(i + 1, j) + 3)
-                    edge.at<uchar>(i, j) = 128;
-            }
-        }
-    }
+//    //寻找锚点
+//    Mat edge(image.size(), CV_8U, Scalar(0));
+//    for (int i = 1; i < mag.rows - 1; i = i + 1)
+//    {
+//        for (int j = 1; j < mag.cols - 1; j = j + 1)
+//        {
+//            if (dir.at<uchar>(i, j) == 255)              //纵向边缘
+//            {
+//                if (mag.at<short>(i, j) > mag.at<short>(i, j - 1) + 3
+//                    && mag.at<short>(i, j) > mag.at<short>(i, j + 1) + 3)
+//                    edge.at<uchar>(i, j) = 128;
+//            }
+//            else                                        //横向边缘
+//            {
+//                if (mag.at<short>(i, j) > mag.at<short>(i - 1, j) + 3
+//                    && mag.at<short>(i, j) > mag.at<short>(i + 1, j) + 3)
+//                    edge.at<uchar>(i, j) = 128;
+//            }
+//        }
+//    }
 
-    //连接锚点，画边缘
+//    //连接锚点，画边缘
 
-    link_seg* seg_head, *seg_now;
-    link_pix* pix_now = NULL;
+//    link_seg* seg_head, *seg_now;
+//    link_pix* pix_now = NULL;
 
-    //创建边缘集合链表的表头
-    seg_head = seg_now = (link_seg*)malloc(sizeof(link_seg));
-    seg_now->next = (link_seg*)malloc(sizeof(link_seg));            //创建新的边缘
-    seg_now = seg_now->next;                                     //指针指过去
-    seg_now->next = NULL;
+//    //创建边缘集合链表的表头
+//    seg_head = seg_now = (link_seg*)malloc(sizeof(link_seg));
+//    seg_now->next = (link_seg*)malloc(sizeof(link_seg));            //创建新的边缘
+//    seg_now = seg_now->next;                                     //指针指过去
+//    seg_now->next = NULL;
 
-    //自动描绘边缘
-    for (int i = 1; i < mag.rows; i++)
-    {
-        for (int j = 1; j < mag.cols; j++)
-        {
-            if (edge.at<uchar>(i, j) == 128)                      //如果找到了锚点则进行下一步
-            {
-                seg_now->addr = (link_pix*)malloc(sizeof(link_pix));  //创建该边缘中的第一个像素点
-                pix_now = seg_now->addr;                           //像素指针指向刚才创建的第一个点
+//    //自动描绘边缘
+//    for (int i = 1; i < mag.rows; i++)
+//    {
+//        for (int j = 1; j < mag.cols; j++)
+//        {
+//            if (edge.at<uchar>(i, j) == 128)                      //如果找到了锚点则进行下一步
+//            {
+//                seg_now->addr = (link_pix*)malloc(sizeof(link_pix));  //创建该边缘中的第一个像素点
+//                pix_now = seg_now->addr;                           //像素指针指向刚才创建的第一个点
 
-                int k = 0;
-                k = rout(i, j, mag, edge, dir, pix_now, seg_now);
-                if (k > shortestline)
-                {
-                    seg_now->addr = pix_now;
-                    seg_now->next = (link_seg*)malloc(sizeof(link_seg));            //创建新的边缘
-                    seg_now = seg_now->next;                                     //指针指过去
-                    seg_now->next = NULL;
-                    seg_now->addr = NULL;
-                }
-                else
-                {
-                    seg_now->addr = NULL;
-                }
-            }
-        }
-    }
-
-
-    //转化为vector
-
-    Mat BGR_edge(mag.size(), CV_8UC3, Scalar(0));
-    seg_now = seg_head->next;
-    for (; seg_now->addr != NULL; seg_now = seg_now->next)
-    {
-        vector<link_pix*>* pix_chain = new vector<link_pix*>;
-        pix_now = seg_now->addr;
-        (*pix_chain).push_back(pix_now);
-        BGR_edge.at<Vec3b>(pix_now->x, pix_now->y)[2] = 255;
-        do{
-            pix_now = pix_now->next;
-            (*pix_chain).push_back(pix_now);
-            BGR_edge.at<Vec3b>(pix_now->x, pix_now->y)[2] = 255;
-        } while (pix_now->ifend != 0);
-        seg_now->pix_chain = pix_chain;
-    }
-
-    imshow("image_edge", edge);           //显示边缘
-    waitKey(0);
-
-    /***************************拆分成直线**************************************/
-
-    seg_now = seg_head->next;
-    while (seg_now->addr != NULL)
-    {
-        (seg_now->line_chain) = new vector<link_line*>;
-        draw_line((*seg_now->pix_chain).begin(), (*seg_now->pix_chain).size(), *seg_now->line_chain);
-        //		seg_now->line_chain = line_chain;
-        seg_now = seg_now->next;
-    }
-
-    /***************************连接成圆弧************************************/
-
-    vector<link_arc> arc_list;
-    seg_now = seg_head->next;
-    while (seg_now->addr != NULL)
-    {
-        draw_arc((*seg_now->line_chain).begin(), (*seg_now->line_chain).size(), arc_list);
-        seg_now = seg_now->next;
-    }
-
-    BGR_edge = 0;
-    for (vector<link_arc>::iterator arc_iter = arc_list.begin(); arc_iter != arc_list.end(); arc_iter++)
-    {
-        vector<link_pix*>::iterator pix_end = (*arc_iter->pix_chain).end();
-        for (vector<link_pix*>::iterator pix_iter = (*arc_iter->pix_chain).begin()
-            ; pix_iter != pix_end; pix_iter++)
-            BGR_edge.at<Vec3b>((*pix_iter)->x, (*pix_iter)->y)[2] = 255;
-    }
-    imshow("arc_candi", BGR_edge);                          //显示可能的圆弧
-    waitKey(0);
-
-    /****************************判断是否是圆弧****************************************************/
-
-    vector<link_arc> arc_candi_list = arc_list;
-    arc_list.clear();
-
-    vector<link_arc>::iterator arc_candi_list_iter = arc_candi_list.begin();
-    vector<link_arc>::iterator arc_candi_list_end = arc_candi_list.end();
-    for (; arc_candi_list_iter != arc_candi_list_end; arc_candi_list_iter++)
-        select_arc(arc_candi_list_iter, (*arc_candi_list_iter->line_chain).begin(), (*arc_candi_list_iter->pix_chain).begin(),
-        (*arc_candi_list_iter->line_chain).size(), arc_list);
+//                int k = 0;
+//                k = rout(i, j, mag, edge, dir, pix_now, seg_now);
+//                if (k > shortestline)
+//                {
+//                    seg_now->addr = pix_now;
+//                    seg_now->next = (link_seg*)malloc(sizeof(link_seg));            //创建新的边缘
+//                    seg_now = seg_now->next;                                     //指针指过去
+//                    seg_now->next = NULL;
+//                    seg_now->addr = NULL;
+//                }
+//                else
+//                {
+//                    seg_now->addr = NULL;
+//                }
+//            }
+//        }
+//    }
 
 
-    BGR_edge = 0;
-    for (vector<link_arc>::iterator arc_iter = arc_list.begin(); arc_iter != arc_list.end(); arc_iter++)
-    {
-        vector<link_pix*>::iterator pix_end = (*arc_iter->pix_chain).end();
-        for (vector<link_pix*>::iterator pix_iter = (*arc_iter->pix_chain).begin(); pix_iter != pix_end; pix_iter++)
-            BGR_edge.at<Vec3b>((*pix_iter)->x, (*pix_iter)->y)[2] = 255;
-    }
-    imshow("arc", BGR_edge);                                  //显示确定的圆弧
-    waitKey(0);
+//    //转化为vector
 
-    /*******************************组成圆或椭圆************************************************/
+//    Mat BGR_edge(mag.size(), CV_8UC3, Scalar(0));
+//    seg_now = seg_head->next;
+//    for (; seg_now->addr != NULL; seg_now = seg_now->next)
+//    {
+//        vector<link_pix*>* pix_chain = new vector<link_pix*>;
+//        pix_now = seg_now->addr;
+//        (*pix_chain).push_back(pix_now);
+//        BGR_edge.at<Vec3b>(pix_now->x, pix_now->y)[2] = 255;
+//        do{
+//            pix_now = pix_now->next;
+//            (*pix_chain).push_back(pix_now);
+//            BGR_edge.at<Vec3b>(pix_now->x, pix_now->y)[2] = 255;
+//        } while (pix_now->ifend != 0);
+//        seg_now->pix_chain = pix_chain;
+//    }
 
-    paixu(arc_list);
-    vector<link_circle> circle_list;
-    while (arc_list.size() != 0)
-    {
-        link_circle circle;                                            //创建一个新圆
-        circle.arc_chain = new vector<link_arc>;
-        circle.pix_chain = new vector<link_pix*>;
-        float radius = arc_list[0].r;                                   //记录第一个圆弧的圆心和半径
-        Point center = arc_list[0].o;
+//    imshow("image_edge", edge);           //显示边缘
+//    waitKey(0);
 
-        vector<link_arc>::iterator iter = arc_list.begin();
-        (*circle.arc_chain).push_back(*iter);                           //将第一个圆弧插入新建的圆的第一个位置
-        iter = arc_list.erase(iter);                                          //将已插入的圆弧删除
-        vector<link_arc>::iterator end = arc_list.end();
+//    /***************************拆分成直线**************************************/
 
-        //将可能属于一个圆的圆弧放在一起
-        while (iter != end)
-        {
-            if (pow(iter->o.x - center.x, 2) + pow(iter->o.y - center.y, 2) < radius*radius*0.0625 && abs(iter->r - radius) < radius*0.25)
-            {
-                (*circle.arc_chain).push_back(*iter);
-                iter = arc_list.erase(iter);
-                end = arc_list.end();
-            }
-            else
-                iter++;
-        }
-        circle_list.push_back(circle);
-    }
+//    seg_now = seg_head->next;
+//    while (seg_now->addr != NULL)
+//    {
+//        (seg_now->line_chain) = new vector<link_line*>;
+//        draw_line((*seg_now->pix_chain).begin(), (*seg_now->pix_chain).size(), *seg_now->line_chain);
+//        //		seg_now->line_chain = line_chain;
+//        seg_now = seg_now->next;
+//    }
 
-    //延长圆弧，逐一连接
-    vector<link_circle> circle_candi_list = circle_list;
-    circle_list.clear();
-    vector<link_circle>::iterator circle_candi_list_iter = circle_candi_list.begin();
-    vector<link_circle>::iterator circle_candi_list_end = circle_candi_list.end();
-    for (; circle_candi_list_iter != circle_candi_list_end; circle_candi_list_iter++)
-    {
-        ExtendArcToCircle((*circle_candi_list_iter->arc_chain), circle_list);
-    }
+//    /***************************连接成圆弧************************************/
 
-    //delete the circle which is too short
+//    vector<link_arc> arc_list;
+//    seg_now = seg_head->next;
+//    while (seg_now->addr != NULL)
+//    {
+//        draw_arc((*seg_now->line_chain).begin(), (*seg_now->line_chain).size(), arc_list);
+//        seg_now = seg_now->next;
+//    }
 
-    vector<link_circle>::iterator circle_list_iter = circle_list.begin();
-    vector<link_circle>::iterator circle_list_end = circle_list.end();
+//    BGR_edge = 0;
+//    for (vector<link_arc>::iterator arc_iter = arc_list.begin(); arc_iter != arc_list.end(); arc_iter++)
+//    {
+//        vector<link_pix*>::iterator pix_end = (*arc_iter->pix_chain).end();
+//        for (vector<link_pix*>::iterator pix_iter = (*arc_iter->pix_chain).begin()
+//            ; pix_iter != pix_end; pix_iter++)
+//            BGR_edge.at<Vec3b>((*pix_iter)->x, (*pix_iter)->y)[2] = 255;
+//    }
+//    imshow("arc_candi", BGR_edge);                          //显示可能的圆弧
+//    waitKey(0);
 
-    for (; circle_list_iter != circle_list_end;)
-    {
-        if (circle_list_iter->pix_chain->size() < pi*0.75*circle_list_iter->r)                  //不够半圈，放回到圆弧列表，下一步找椭圆
-        {
-            arc_list.insert(arc_list.end(), circle_list_iter->arc_chain->begin(), circle_list_iter->arc_chain->end());
-            circle_list_iter = circle_list.erase(circle_list_iter);
-            circle_list_end = circle_list.end();
-        }
-        else
-        {
-            circle_list_iter++;
-        }
-    }
+//    /****************************判断是否是圆弧****************************************************/
 
-    /***************************剩下的连成椭圆******************************************/
-/*	paixu(arc_list);
-    vector<link_ellips> ellips_candi_list;
-    while (arc_list.size() != 0)
-    {
-        link_ellips ellips;                                            //创建一个新椭圆
-        ellips.arc_chain = new vector<link_arc>;
-        ellips.pix_chain = new vector<link_pix*>;
-        float radius = arc_list[0].r;                                   //记录第一个圆弧的圆心和半径
-        Point center = arc_list[0].o;
+//    vector<link_arc> arc_candi_list = arc_list;
+//    arc_list.clear();
 
-        vector<link_arc>::iterator iter = arc_list.begin();
-        (*ellips.arc_chain).push_back(*iter);                           //将第一个圆弧插入新建的椭圆的第一个位置
-        iter = arc_list.erase(iter);                                          //将已插入的圆弧删除
-        vector<link_arc>::iterator end = arc_list.end();
-
-        //将可能属于一个椭圆的圆弧放在一起
-        while (iter != end)
-        {
-            if (pow(iter->o.x - center.x, 2) + pow(iter->o.y - center.y, 2) < radius*radius*0.25 && abs(iter->r - radius) < radius*0.5)
-            {
-                (*ellips.arc_chain).push_back(*iter);
-                iter = arc_list.erase(iter);
-                end = arc_list.end();
-            }
-            else
-                iter++;
-        }
-        ellips_candi_list.push_back(ellips);
-    }
-
-    //extend the arc and fit a ellips
-    vector<link_ellips> ellips_list;
-    vector<link_ellips>::iterator ellips_candi_list_iter = ellips_candi_list.begin();
-    vector<link_ellips>::iterator ellips_candi_list_end = ellips_candi_list.end();
-    for (; ellips_candi_list_iter != ellips_candi_list_end; ellips_candi_list_iter++)
-    {
-        ExtendArcToEllips((*ellips_candi_list_iter->arc_chain), ellips_list);
-    }
-*/
-
-    /**************************骇母霍兹原则检测***************************************/
-    float alpha = 0;
-    circle_list_iter = circle_list.begin();
-    circle_list_end = circle_list.end();
-    while (circle_list_iter != circle_list_end)
-    {
-        alpha = helmholtz(circle_list_iter,sobelx,sobely);
-        if (alpha > 1)
-        {
-            circle_list_iter = circle_list.erase(circle_list_iter);
-            circle_list_end = circle_list.end();
-        }
-        else
-        {
-            circle_list_iter++;
-        }
-    }
+//    vector<link_arc>::iterator arc_candi_list_iter = arc_candi_list.begin();
+//    vector<link_arc>::iterator arc_candi_list_end = arc_candi_list.end();
+//    for (; arc_candi_list_iter != arc_candi_list_end; arc_candi_list_iter++)
+//        select_arc(arc_candi_list_iter, (*arc_candi_list_iter->line_chain).begin(), (*arc_candi_list_iter->pix_chain).begin(),
+//        (*arc_candi_list_iter->line_chain).size(), arc_list);
 
 
-    circle_list_iter = circle_list.begin();
-    for (; circle_list_iter != circle_list_end; circle_list_iter++)
-    {
-        circle(image, circle_list_iter->o, circle_list_iter->r, Scalar(0, 0, 255));
-    }
-    imshow("image_circle", image);
-    waitKey(0);
-    return 0;
-}
+//    BGR_edge = 0;
+//    for (vector<link_arc>::iterator arc_iter = arc_list.begin(); arc_iter != arc_list.end(); arc_iter++)
+//    {
+//        vector<link_pix*>::iterator pix_end = (*arc_iter->pix_chain).end();
+//        for (vector<link_pix*>::iterator pix_iter = (*arc_iter->pix_chain).begin(); pix_iter != pix_end; pix_iter++)
+//            BGR_edge.at<Vec3b>((*pix_iter)->x, (*pix_iter)->y)[2] = 255;
+//    }
+//    imshow("arc", BGR_edge);                                  //显示确定的圆弧
+//    waitKey(0);
+
+//    /*******************************组成圆或椭圆************************************************/
+
+//    paixu(arc_list);
+//    vector<link_circle> circle_list;
+//    while (arc_list.size() != 0)
+//    {
+//        link_circle circle;                                            //创建一个新圆
+//        circle.arc_chain = new vector<link_arc>;
+//        circle.pix_chain = new vector<link_pix*>;
+//        float radius = arc_list[0].r;                                   //记录第一个圆弧的圆心和半径
+//        Point center = arc_list[0].o;
+
+//        vector<link_arc>::iterator iter = arc_list.begin();
+//        (*circle.arc_chain).push_back(*iter);                           //将第一个圆弧插入新建的圆的第一个位置
+//        iter = arc_list.erase(iter);                                          //将已插入的圆弧删除
+//        vector<link_arc>::iterator end = arc_list.end();
+
+//        //将可能属于一个圆的圆弧放在一起
+//        while (iter != end)
+//        {
+//            if (pow(iter->o.x - center.x, 2) + pow(iter->o.y - center.y, 2) < radius*radius*0.0625 && abs(iter->r - radius) < radius*0.25)
+//            {
+//                (*circle.arc_chain).push_back(*iter);
+//                iter = arc_list.erase(iter);
+//                end = arc_list.end();
+//            }
+//            else
+//                iter++;
+//        }
+//        circle_list.push_back(circle);
+//    }
+
+//    //延长圆弧，逐一连接
+//    vector<link_circle> circle_candi_list = circle_list;
+//    circle_list.clear();
+//    vector<link_circle>::iterator circle_candi_list_iter = circle_candi_list.begin();
+//    vector<link_circle>::iterator circle_candi_list_end = circle_candi_list.end();
+//    for (; circle_candi_list_iter != circle_candi_list_end; circle_candi_list_iter++)
+//    {
+//        ExtendArcToCircle((*circle_candi_list_iter->arc_chain), circle_list);
+//    }
+
+//    //delete the circle which is too short
+
+//    vector<link_circle>::iterator circle_list_iter = circle_list.begin();
+//    vector<link_circle>::iterator circle_list_end = circle_list.end();
+
+//    for (; circle_list_iter != circle_list_end;)
+//    {
+//        if (circle_list_iter->pix_chain->size() < pi*0.75*circle_list_iter->r)                  //不够半圈，放回到圆弧列表，下一步找椭圆
+//        {
+//            arc_list.insert(arc_list.end(), circle_list_iter->arc_chain->begin(), circle_list_iter->arc_chain->end());
+//            circle_list_iter = circle_list.erase(circle_list_iter);
+//            circle_list_end = circle_list.end();
+//        }
+//        else
+//        {
+//            circle_list_iter++;
+//        }
+//    }
+
+//    /***************************剩下的连成椭圆******************************************/
+//    paixu(arc_list);
+//    vector<link_ellips> ellips_candi_list;
+//    while (arc_list.size() != 0)
+//    {
+//        link_ellips ellips;                                            //创建一个新椭圆
+//        ellips.arc_chain = new vector<link_arc>;
+//        ellips.pix_chain = new vector<link_pix*>;
+//        float radius = arc_list[0].r;                                   //记录第一个圆弧的圆心和半径
+//        Point center = arc_list[0].o;
+
+//        vector<link_arc>::iterator iter = arc_list.begin();
+//        (*ellips.arc_chain).push_back(*iter);                           //将第一个圆弧插入新建的椭圆的第一个位置
+//        iter = arc_list.erase(iter);                                          //将已插入的圆弧删除
+//        vector<link_arc>::iterator end = arc_list.end();
+
+//        //将可能属于一个椭圆的圆弧放在一起
+//        while (iter != end)
+//        {
+//            if (pow(iter->o.x - center.x, 2) + pow(iter->o.y - center.y, 2) < radius*radius*0.25 && abs(iter->r - radius) < radius*0.5)
+//            {
+//                (*ellips.arc_chain).push_back(*iter);
+//                iter = arc_list.erase(iter);
+//                end = arc_list.end();
+//            }
+//            else
+//                iter++;
+//        }
+//        ellips_candi_list.push_back(ellips);
+//    }
+
+//    //extend the arc and fit a ellips
+//    vector<link_ellips> ellips_list;
+//    vector<link_ellips>::iterator ellips_candi_list_iter = ellips_candi_list.begin();
+//    vector<link_ellips>::iterator ellips_candi_list_end = ellips_candi_list.end();
+//    for (; ellips_candi_list_iter != ellips_candi_list_end; ellips_candi_list_iter++)
+//    {
+//        ExtendArcToEllips((*ellips_candi_list_iter->arc_chain), ellips_list);
+//    }
+
+
+//    /**************************骇母霍兹原则检测***************************************/
+//    float alpha = 0;
+//    circle_list_iter = circle_list.begin();
+//    circle_list_end = circle_list.end();
+//    while (circle_list_iter != circle_list_end)
+//    {
+//        alpha = helmholtz(circle_list_iter,sobelx,sobely);
+//        if (alpha > 1)
+//        {
+//            circle_list_iter = circle_list.erase(circle_list_iter);
+//            circle_list_end = circle_list.end();
+//        }
+//        else
+//        {
+//            circle_list_iter++;
+//        }
+//    }
+
+
+//    circle_list_iter = circle_list.begin();
+//    for (; circle_list_iter != circle_list_end; circle_list_iter++)
+//    {
+//        circle(image, circle_list_iter->o, circle_list_iter->r, Scalar(0, 0, 255));
+//    }
+//    imshow("image_circle", image);
+//    waitKey(0);
+//    return 0;
+//}
